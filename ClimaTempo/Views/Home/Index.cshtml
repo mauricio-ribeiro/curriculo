@@ -1,0 +1,119 @@
+﻿@using ClimaTempo.Models
+@model  ClimaTempo.ViewModels.PrevisaoClimaViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="jumbotron">
+    <h1>Clima Tempo Simples</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header bg-primary">Cidades mais frias hoje</h4>
+            <div class="card-body">
+                <table class="table">
+                    @foreach (PrevisaoClima previsaoClima in Model.CidadesMaisFrias)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(m => previsaoClima.Cidade.Nome)</td>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMinimaStr)</td>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMaximaStr)</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h4 class="card-header bg-primary">Cidades mais quentes hoje</h4>
+            <div class="card-body">
+                <table class="table">
+                    @foreach (PrevisaoClima previsaoClima in Model.CidadesMaisQuentes)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(m => previsaoClima.Cidade.Nome)</td>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMinimaStr)</td>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMaximaStr)</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        @Html.Label("Estados")
+        @Html.DropDownList("Estado", ViewBag.Estados as SelectList, "--Selecione um estado--", new { @id = "Estado", @class = "form-control" })
+    </div>
+    <div class="col-md-6">
+        @Html.Label("Cidades")
+        @Html.DropDownList("Cidade", new SelectList(" "), "--Selecione uma cidade--", new { @id = "Cidade", @class = "form-control" })
+    </div>
+</div>
+<br />
+
+<div id="partialView" class="partialView">
+    @Html.Partial("_Previsao",Model.Previsoes)
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+<script>
+
+    $(function () {
+        $('#Estado').change(function () {
+
+            $.getJSON('/Home/CidadeList/' + $('#Estado').val(), function (data) {
+                var items = '<option>--Selecione uma cidade--</option>';
+                $.each(data, function (i, cidade) {
+                    items += "<option value='" + cidade.Value + "'>" + cidade.Text + "</option>";
+                });
+                $('#Cidade').html(items);
+            });
+            $.ajax(
+                {
+                    url: '@Url.Action("ObterPrevisao","Home")',
+                    type: 'GET',
+                    /*data: { id: $('#Cidade').val() },*/
+                    data: { id: null },
+
+                    success: function (data) {
+                        $('#partialView').html(data);
+                        $('#partialView').show();
+                    }
+                });
+        });
+
+    });
+
+
+    $(document).ready(function () {
+        $('#Cidade').change(function () {
+            $.ajax(
+                {
+                    url: '@Url.Action("ObterPrevisao","Home")',
+                    type: 'GET',
+                    data: { id: $('#Cidade').val() },
+
+                    success: function (data) {
+                        $('#partialView').html(data);
+                        $('#partialView').show();
+                    }
+                }
+            );
+        });
+    });
+
+</script>
+
+
+
+
+

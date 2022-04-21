@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ClimaTempo.Models.PrevisaoClima>
+
+@{
+    var count = 0;
+    var diasDaSemana = new List<string> { "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado" };
+}
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<div class="row seven-cols">
+    @foreach (var previsaoClima in Model)
+    {
+        <div class="col-md-1">
+            <div class="card">
+                <h4 class="card-header bg-primary">@diasDaSemana[count]</h4>
+                <div class="card-body">
+                    <table class="table small">
+                        <tr>
+                            <td>@Html.DisplayFor(m => previsaoClima.Clima.Nome)</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMinimaStr)</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayFor(m => previsaoClima.TemperaturaMaximaStr)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        count++;
+    }
+</div>
+
+
+
+
+
